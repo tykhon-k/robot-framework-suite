@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secure Area</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="card">
+      <h1 id="page-title">Secure Area</h1>
+      <p id="flash" class="flash success" role="status">
+        You logged into a secure area.
+      </p>
+      <button id="logout" type="button">Log out</button>
+    </main>
+    <script>
+      if (sessionStorage.getItem("auth") !== "1")
+        window.location.href = "index.html";
+      document.getElementById("logout").addEventListener("click", () => {
+        sessionStorage.removeItem("auth");
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>

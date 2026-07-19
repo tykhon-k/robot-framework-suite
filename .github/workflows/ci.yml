@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  robot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Start the app under test
+        run: |
+          python app/server.py &
+          for _ in $(seq 1 30); do curl -sf http://localhost:8000/api/health && break; sleep 1; done
+
+      - name: Run Robot Framework suites (API + UI)
+        run: robot --outputdir results tests/
+
+      - name: Upload Robot report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-results
+          path: results/
+          retention-days: 7
